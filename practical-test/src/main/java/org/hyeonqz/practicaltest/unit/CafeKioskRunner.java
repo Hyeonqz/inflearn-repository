@@ -1,5 +1,8 @@
 package org.hyeonqz.practicaltest.unit;
 
+import org.hyeonqz.practicaltest.unit.beverage.Americano;
+import org.hyeonqz.practicaltest.unit.beverage.Latte;
+
 public class CafeKioskRunner {
 
 	public static void main (String[] args) {
