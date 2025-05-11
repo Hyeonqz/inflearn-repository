@@ -30,11 +30,12 @@ dependencies {
     // h2
 //    runtimeOnly 'com.h1database:h2'
 
-    // test
+    // test -> Junit5, Assertj 포함
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+// 테스트 실행 가능
 tasks.named('test') {
     useJUnitPlatform()
 }

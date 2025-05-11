@@ -38,4 +38,33 @@
 - 주문 목록 총 금액 계산하기
 - 주문 생성하기
 
+#### 수동 테스트 vs 자동화된 테스트
+수동 테스트? -> System.out.println() 을 통한 사람이 직접 값 체크 <br>
+자동화 테스트? -> Junit5 를 사용하여 테스트 주체를 기계로 하여 검증을 해준다 <br>
 
+### 단위 테스트
+- 작은 코드 단위(클래스,메소드) 를 독립적으로 검증하는 테스트
+  - 독립적? -> 외부의 개입을 받지 않는다 Ex) repository, 외부 api 호출
+- 검증 속도가 빠르고, 안정적이다
+
+어떻게 테스트를 할까? -> Junit5, AssertJ 사용 <br>
+- AssertJ -> 풍부한 API, 메소드 체이닝 지원 <br>
+
+#### 테스트 케이스 세분화하기
+1. 해피 케이스
+2. 예외 케이스
+
+어떠한 경계값이 존재한다면, 경계값 테스트가 필요하다 ex) 범위, 구간, 날짜 <br>
+```java
+	@Test
+    void add_count_throw_test() {
+    CafeKiosk cafeKiosk = new CafeKiosk();
+    Americano americano = new Americano();
+
+    Assertions.assertThatThrownBy(() -> cafeKiosk.add(americano,0))
+    .isInstanceOf(IllegalArgumentException.class)
+    .hasMessage("음료는 1잔 이상 주문하실 수 있습니다.");
+    }
+```
+
+위 코드는 일반적인 경계값 예외 케이스 테스트 이다. <br>
