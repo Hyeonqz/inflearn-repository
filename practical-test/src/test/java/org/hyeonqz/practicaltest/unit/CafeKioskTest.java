@@ -1,8 +1,11 @@
 package org.hyeonqz.practicaltest.unit;
 
+import java.time.LocalDateTime;
+
 import org.assertj.core.api.Assertions;
 import org.hyeonqz.practicaltest.unit.beverage.Americano;
 import org.hyeonqz.practicaltest.unit.beverage.Latte;
+import org.hyeonqz.practicaltest.unit.order.Order;
 import org.junit.jupiter.api.Test;
 
 class CafeKioskTest {
@@ -76,4 +79,46 @@ class CafeKioskTest {
 		// then
 		Assertions.assertThat(cafeKiosk.getBeverages()).isEmpty();
 	}
+
+	@Test
+	void createOrderV2() {
+		// given
+		CafeKiosk cafeKiosk = new CafeKiosk();
+		Americano americano = new Americano();
+
+		cafeKiosk.add(americano);
+
+		Order order = cafeKiosk.createOrder();
+
+		Assertions.assertThat(order.getBeverages()).hasSize(1);
+		Assertions.assertThat(order.getBeverages().get(0).getName()).isEqualTo("아메리카노");
+	}
+
+	@Test
+	void createOrderV3_currenTime() {
+		// given
+		CafeKiosk cafeKiosk = new CafeKiosk();
+		Americano americano = new Americano();
+
+		LocalDateTime currentDateTime = LocalDateTime.of(2025,5,2,9,59);
+
+		Assertions.assertThatThrownBy(() -> cafeKiosk.createOrder(currentDateTime))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("주문시간이 아닙니다. 관리자에게 문의해주세요");
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

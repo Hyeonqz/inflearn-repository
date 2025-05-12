@@ -8,7 +8,6 @@ import org.hyeonqz.practicaltest.unit.beverage.Beverage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
 public class Order {
 
 	private final LocalDateTime orderDate;
@@ -17,6 +16,14 @@ public class Order {
 	public Order (LocalDateTime orderDate, List<Beverage> beverages) {
 		this.orderDate = orderDate;
 		this.beverages = beverages;
+	}
+
+	public LocalDateTime getOrderDate () {
+		return orderDate;
+	}
+
+	public List<Beverage> getBeverages () {
+		return beverages;
 	}
 
 }
