@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions;
 import org.hyeonqz.practicaltest.unit.beverage.Americano;
 import org.hyeonqz.practicaltest.unit.beverage.Latte;
 import org.hyeonqz.practicaltest.unit.order.Order;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class CafeKioskTest {
@@ -107,12 +108,20 @@ class CafeKioskTest {
 			.hasMessage("주문시간이 아닙니다. 관리자에게 문의해주세요");
 	}
 
+	@Test
+	@DisplayName("TDD 를 사용해본다.")
+	void calculateTotalPrice() {
+		CafeKiosk cafeKiosk = new CafeKiosk();
+		Americano americano = new Americano();
+		Latte latte = new Latte();
 
+		cafeKiosk.add(americano);
+		cafeKiosk.add(latte);
 
+		int i = cafeKiosk.calculateTotalPrice();
 
-
-
-
+		Assertions.assertThat(i).isEqualTo(8500);
+	}
 
 
 
