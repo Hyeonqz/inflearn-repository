@@ -23,6 +23,7 @@ class CafeKioskTest {
 	    // then
 	}
 
+	@DisplayName("음료 1개를 추가하면 주문 목록에 담긴다.")
 	@Test
 	void add_testV2() {
 		CafeKiosk cafeKiosk = new CafeKiosk();
@@ -109,17 +110,19 @@ class CafeKioskTest {
 	}
 
 	@Test
-	@DisplayName("TDD 를 사용해본다.")
+	@DisplayName("주문 목록에 담긴 상품들의 총 금액을 계산할 수 있다.")
 	void calculateTotalPrice() {
+		// given
 		CafeKiosk cafeKiosk = new CafeKiosk();
 		Americano americano = new Americano();
 		Latte latte = new Latte();
 
+		// when
 		cafeKiosk.add(americano);
 		cafeKiosk.add(latte);
 
+		// then
 		int i = cafeKiosk.calculateTotalPrice();
-
 		Assertions.assertThat(i).isEqualTo(8500);
 	}
 
