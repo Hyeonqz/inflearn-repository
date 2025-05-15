@@ -138,3 +138,45 @@ public abstract class BaseEntity {
 // 추가적으로 메인 어플리케이션에  
 // @EnableJpaAuditing  어노테이션을 선언해야 한다.
 ```
+
+### Repository Test
+단위 테스트에 가까운 테스트 이다 <br>
+어떻게 보면 스프링 서버를 띄우지만, db connection 부분만 띄우기 때문에 단위 테스트 성격을 가진다 <br>
+
+```java
+@ActiveProfiles("test")
+@DataJpaTest
+class ProductRepositoryTest {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Test
+    @DisplayName("원하는 판매상태를 가진 상품들을 조회한다.")
+    void findAllBySellingTypeInTest () {
+        // given
+        Product product = this.getProduct();
+
+        Product product2 = this.getProduct2();
+
+        Product product3 = this.getProduct3();
+
+        productRepository.saveAll(List.of(product, product2, product3));
+
+        // when
+        List<Product> allBySellingTypeIn = productRepository.findAllBySellingTypeIn(List.of(SELLING, HOLD));
+
+        // then
+        Assertions.assertThat(allBySellingTypeIn).hasSize(2)
+            .extracting("productNumber", "productName", "sellingType") // entity랑 같은 이름으로 해야함
+            // 순서 상관없이 체크
+            .containsExactlyInAnyOrder(
+                Tuple.tuple("001", "아메리카노", SELLING),
+                Tuple.tuple("002", "카페라떼", HOLD)
+            );
+        //.containsExactly() 순서까지 체크를 해줌
+    }
+}
+```
+
+@SpringBootTest 보다 가볍다 <br>

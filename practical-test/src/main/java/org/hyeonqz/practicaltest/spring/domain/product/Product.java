@@ -9,9 +9,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Product extends BaseEntity {
@@ -31,28 +33,14 @@ public class Product extends BaseEntity {
 
     private int price;
 
-    public Long getId () {
-        return id;
-    }
-
-    public String getProductNumber () {
-        return productNumber;
-    }
-
-    public ProductType getProductType () {
-        return productType;
-    }
-
-    public ProductSellingType getSellingType () {
-        return sellingType;
-    }
-
-    public String getProductName () {
-        return productName;
-    }
-
-    public int getPrice () {
-        return price;
+    @Builder
+    public Product (String productNumber, ProductType productType, ProductSellingType sellingType, String productName,
+        int price) {
+        this.productNumber = productNumber;
+        this.productType = productType;
+        this.sellingType = sellingType;
+        this.productName = productName;
+        this.price = price;
     }
 
 }
