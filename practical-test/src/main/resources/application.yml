@@ -1,1 +1,52 @@
-spring.application.name=practical-test
+server:
+  port: 20000
+
+spring:
+  profiles:
+    default: local
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:cafekiosk
+    driver-class-name: org.h2.Driver
+    username: hkjin
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+
+--- # test
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: never # sql initialize use none

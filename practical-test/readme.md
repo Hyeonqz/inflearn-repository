@@ -106,3 +106,35 @@
 ### 언어가 사고를 제한하게 하지 말자.
 잘못 작성한 테스트는 오히려 허들이 되고, 사고를 제한하게 할 수 있다 <br>
 
+
+## Spring & JPA 기반 테스트
+레이어드 아키텍처를 사용하는 이유? -> '관심사의 분리' 가 주된 목적이다 <br>
+
+테스트 하기 어려운 부분을 분리해서 테스트 하고자 하는 영역에 집중하자 <br>
+
+단위 테스트 만으로는 커버하기 어려운 부분이 생긴다, 그러므로 통합 테스트가 필요하다 <br>
+
+### 통합 테스트
+- 여러 모듈이 협력하는 기능을 통합적으로 검증하는 테스트
+- 작은 범위의 단위 테스트만으로는 기능 전체의 신뢰성을 보장할 수 없다.
+- 풍부한 단위 테스트 -> 큰 기능을 검증하는 통합 테스트가 필요하다.
+
+jpa N:N 관계시 중간 매핑 테이블을 둬서 관리하는게 좋다 <br>
+
+Entity 에서 상속받을 baseEntity 는 인스턴스를 만들 필요가 없기에 추상 클래스로 만든다
+```java
+@Getter
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public abstract class BaseEntity {
+
+  @CreatedDate
+  private LocalDateTime createdDateTime;
+
+  @LastModifiedDate
+  private LocalDateTime updatedDateTime;
+}
+
+// 추가적으로 메인 어플리케이션에  
+// @EnableJpaAuditing  어노테이션을 선언해야 한다.
+```
