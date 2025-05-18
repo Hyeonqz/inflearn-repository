@@ -139,6 +139,11 @@ public abstract class BaseEntity {
 // @EnableJpaAuditing  어노테이션을 선언해야 한다.
 ```
 
+## Persistence Layer
+- Data Access 역할
+- 비즈니스 가공 로직이 포함되어서는 안 된다.
+  - Data -> CRUD 에만 집중 해야함.
+
 ### Repository Test
 단위 테스트에 가까운 테스트 이다 <br>
 어떻게 보면 스프링 서버를 띄우지만, db connection 부분만 띄우기 때문에 단위 테스트 성격을 가진다 <br>
@@ -180,3 +185,34 @@ class ProductRepositoryTest {
 ```
 
 @SpringBootTest 보다 가볍다 <br>
+
+## Business Layer
+- 비즈니스 로직을 구현하는 역할
+- Persistence Layer 와 의 상호작용을 통해 비즈니스 로직을 전개시킨다.
+- '트랜잭션' 을 보장해야 한다.
+
+Business Layer 테스트는 Persistence Layer 와 두개를 통합하는 테스트를 진행한다 <br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
