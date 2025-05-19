@@ -193,7 +193,7 @@ class ProductRepositoryTest {
 
 Business Layer 테스트는 Persistence Layer 와 두개를 통합하는 테스트를 진행한다 <br>
 
-
+LocalDateTime 같은 경우는 파라미터를 통해서 받는 식으로 로직을 작성해나가는 것이 좋다 <br>
 
 
 

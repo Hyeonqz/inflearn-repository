@@ -1,8 +1,9 @@
 package org.hyeonqz.practicaltest.spring.api.controller.order;
 
+import java.time.LocalDateTime;
+
 import org.hyeonqz.practicaltest.spring.api.controller.order.reqeust.OrderCreateRequest;
 import org.hyeonqz.practicaltest.spring.api.service.order.OrderService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +18,8 @@ public class OrderController {
 
     @PostMapping("/api/v1/orders/new")
     public void createOrder (@RequestBody OrderCreateRequest request) {
-        orderService.createOrder(request);
+        LocalDateTime now = LocalDateTime.now();
+        orderService.createOrder(request, now);
 
     }
 

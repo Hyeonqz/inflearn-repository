@@ -5,9 +5,6 @@ import java.util.List;
 
 import org.hyeonqz.practicaltest.unit.beverage.Beverage;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 public class Order {
 
 	private final LocalDateTime orderDate;
@@ -18,7 +15,7 @@ public class Order {
 		this.beverages = beverages;
 	}
 
-	public LocalDateTime getOrderDate () {
+    public LocalDateTime getOrderDate () {
 		return orderDate;
 	}
 

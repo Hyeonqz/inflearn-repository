@@ -46,6 +46,32 @@ class ProductRepositoryTest {
             //.containsExactly() 순서까지 체크를 해줌
     }
 
+    @Test
+    @DisplayName("원하는 판매상태를 가진 상품들을 조회한다.")
+    void findAllByProductNumberInTest() {
+        // given
+        Product product = this.getProduct();
+
+        Product product2 = this.getProduct2();
+
+        Product product3 = this.getProduct3();
+
+        productRepository.saveAll(List.of(product, product2, product3));
+
+        // when
+        List<Product> allByProductNumberIn = productRepository.findAllByProductNumberIn(List.of("001", "002"));
+
+        // then
+        Assertions.assertThat(allByProductNumberIn).hasSize(2)
+            .extracting("productNumber","productName","sellingType") // entity랑 같은 이름으로 해야함
+            // 순서 상관없이 체크
+            .containsExactlyInAnyOrder(
+                Tuple.tuple("001","아메리카노",SELLING),
+                Tuple.tuple("002","카페라떼",HOLD)
+            );
+        //.containsExactly() 순서까지 체크를 해줌
+    }
+
     private Product getProduct3 () {
         return Product.builder()
             .productNumber("003")

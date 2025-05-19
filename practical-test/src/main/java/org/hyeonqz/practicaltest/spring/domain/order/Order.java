@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hyeonqz.practicaltest.spring.domain.BaseEntity;
 import org.hyeonqz.practicaltest.spring.domain.orderproduct.OrderProduct;
+import org.hyeonqz.practicaltest.spring.domain.product.Product;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -39,5 +40,19 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     public List<OrderProduct> orderProducts = new ArrayList<>();
 
+    public Order (List<Product> products, LocalDateTime registeredDateTime) {
+        this.status = OrderStatus.INIT;
+        this.totalPrice = products.stream()
+            .mapToInt(Product::getPrice)
+            .sum();
+        this.registeredDateTime = registeredDateTime;
+        this.orderProducts = products.stream()
+            .map(product -> new OrderProduct(this, product))
+            .toList();
+    }
+
+    public static Order create (List<Product> products, LocalDateTime now) {
+        return new Order(products, now);
+    }
 
 }
