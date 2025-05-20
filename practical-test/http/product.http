@@ -1,0 +1,4 @@
+### 판매 상품 조회
+GET localhost:20000/api/v1/products/selling
+
+###

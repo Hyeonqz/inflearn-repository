@@ -9,13 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 public class ProductController {
     private final ProductService productService;
-
-    public ProductController (ProductService productService) {
-        this.productService = productService;
-    }
 
     @GetMapping("/api/v1/products/selling")
     public List<ProductResponse> getSellingProducts() {
