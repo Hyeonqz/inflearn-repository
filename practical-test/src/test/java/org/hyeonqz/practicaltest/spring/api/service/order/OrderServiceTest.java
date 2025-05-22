@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.assertj.core.groups.Tuple;
 import org.hyeonqz.practicaltest.spring.api.controller.order.reqeust.OrderCreateRequest;
 import org.hyeonqz.practicaltest.spring.api.service.order.response.OrderResponse;
 import org.hyeonqz.practicaltest.spring.domain.order.OrderRepository;
@@ -18,6 +19,8 @@ import org.hyeonqz.practicaltest.spring.domain.orderproduct.OrderProductReposito
 import org.hyeonqz.practicaltest.spring.domain.product.Product;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductRepository;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductType;
+import org.hyeonqz.practicaltest.spring.domain.stock.Stock;
+import org.hyeonqz.practicaltest.spring.domain.stock.StockRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +28,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @ActiveProfiles("test")
 @SpringBootTest
 class OrderServiceTest {
@@ -40,21 +45,15 @@ class OrderServiceTest {
     private OrderProductRepository orderProductRepository;
 
     @Autowired
+    private StockRepository stockRepository;
+
+    @Autowired
     private OrderService orderService;
 
     @BeforeEach
     void setUp () {
 
     }
-
-    @AfterEach
-    void tearDown () {
-        orderProductRepository.deleteAllInBatch();
-        productRepository.deleteAllInBatch();
-        orderRepository.deleteAllInBatch();
-    }
-
-
 
     @Test
     @DisplayName("주문번호 리스트를 받아 주문을 생성한다.")
@@ -108,6 +107,47 @@ class OrderServiceTest {
             .extracting("registeredDateTime", "totalPrice")
             .contains(now, 2000);
         Assertions.assertThat(response.getProducts()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("재고와 관련된 상품이 포함되어 있는 주문번호 리스트를 받아 주문을 생성한다.")
+    void createOrderWithStock() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+
+        Product product = this.createProduct(BAKERY, "001",1000);
+        Product product2 = this.createProduct(BOTTLE, "002",3000);
+        Product product3 = this.createProduct(HANDMADE, "003",5000);
+        productRepository.saveAll(List.of(product, product2, product3));
+
+        Stock stock1 = Stock.create("001",2);
+        Stock stock2 = Stock.create("002",2);
+        stockRepository.saveAll(List.of(stock1, stock2));
+
+        OrderCreateRequest request = OrderCreateRequest.builder()
+            .productNumbers(List.of("001","001","002","003"))
+            .build();
+
+        // when
+        OrderResponse response = orderService.createOrder(request, now);
+
+        // then
+        Assertions.assertThat(response.getProducts()).hasSize(4)
+            .extracting("productNumber", "price")
+            .containsExactlyInAnyOrder(
+                Tuple.tuple("001",1000),
+                Tuple.tuple("001",1000),
+                Tuple.tuple("002",3000),
+                Tuple.tuple("003",5000)
+            );
+
+        List<Stock> stocks = stockRepository.findAll();
+        Assertions.assertThat(stocks).hasSize(2)
+            .extracting("productNumber", "quantity")
+            .containsExactlyInAnyOrder(
+                Tuple.tuple("001",0),
+                Tuple.tuple("002",1)
+            );
     }
 
     private Product createProduct(ProductType type, String productNumber, int price) {
