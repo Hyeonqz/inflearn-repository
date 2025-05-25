@@ -1,11 +1,8 @@
 package org.hyeonqz.practicaltest.spring.api.service.order;
 
-import static org.hyeonqz.practicaltest.spring.domain.product.ProductSellingType.*;
-import static org.hyeonqz.practicaltest.spring.domain.product.ProductSellingType.HOLD;
 import static org.hyeonqz.practicaltest.spring.domain.product.ProductSellingType.SELLING;
 import static org.hyeonqz.practicaltest.spring.domain.product.ProductType.*;
 import static org.hyeonqz.practicaltest.spring.domain.product.ProductType.HANDMADE;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +18,6 @@ import org.hyeonqz.practicaltest.spring.domain.product.ProductRepository;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductType;
 import org.hyeonqz.practicaltest.spring.domain.stock.Stock;
 import org.hyeonqz.practicaltest.spring.domain.stock.StockRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -148,6 +144,33 @@ class OrderServiceTest {
                 Tuple.tuple("001",0),
                 Tuple.tuple("002",1)
             );
+    }
+
+    @Test
+    @DisplayName("재고가 부족한 상품으로 주문을 생성하려는 경우 예외가 발생한다.")
+    void createOrderWithNoStock() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+
+        Product product = this.createProduct(BAKERY, "001",1000);
+        Product product2 = this.createProduct(BOTTLE, "002",3000);
+        Product product3 = this.createProduct(HANDMADE, "003",5000);
+        productRepository.saveAll(List.of(product, product2, product3));
+
+        Stock stock1 = Stock.create("001",1);
+        Stock stock2 = Stock.create("002",1);
+        stock1.deductQuantity(1);
+        stockRepository.saveAll(List.of(stock1, stock2));
+
+        OrderCreateRequest request = OrderCreateRequest.builder()
+            .productNumbers(List.of("001","001","002","003"))
+            .build();
+
+        // when & then
+        Assertions.assertThatThrownBy(() -> orderService.createOrder(request, now))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("재고가 부족한 상품이 있습니다.");
+
     }
 
     private Product createProduct(ProductType type, String productNumber, int price) {
