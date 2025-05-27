@@ -199,9 +199,12 @@ LocalDateTime 같은 경우는 파라미터를 통해서 받는 식으로 로직
 @SpringBootTest 는 @Transactional 이 없어 자동으로 롤백이 되지않는다. 롤백이 필요하면 @Transactional 을 사용하자 <br>
 
 
+## Presentation Layer
+- 외부 요청을 가장 먼저 받는 계층
+  - 스프링 사용시 filter, interceptor 가 앞단에서 먼저 요청을 받을 수 있다.
+- 파라미터에 대한 최소한의 검증을 수행한다.
 
-
-
+위 계층에서는 Mocking 을 통하여 테스트를 진행한다 <br>
 
 
 

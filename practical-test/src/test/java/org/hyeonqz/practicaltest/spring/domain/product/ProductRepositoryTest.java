@@ -72,6 +72,25 @@ class ProductRepositoryTest {
         //.containsExactly() 순서까지 체크를 해줌
     }
 
+    @Test
+    @DisplayName("가장 마지막으로 저장한 상품의 상품번호를 읽어온다.")
+    void findLatestProduct() {
+        // given
+        Product product = this.getProduct();
+
+        Product product2 = this.getProduct2();
+
+        Product product3 = this.getProduct3();
+
+        productRepository.saveAll(List.of(product, product2, product3));
+
+        // when
+        String latestProduct = productRepository.findLatestProductNumber();
+
+        // then
+        Assertions.assertThat(latestProduct).isEqualTo("003");
+    }
+
     private Product getProduct3 () {
         return Product.builder()
             .productNumber("003")
