@@ -11,6 +11,8 @@ import org.hyeonqz.practicaltest.spring.domain.product.ProductRepository;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductSellingType;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductType;
 import org.hyeonqz.practicaltest.spring.domain.product.dto.req.ProductCreateRequest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,12 @@ class ProductServiceTest {
     
     @Autowired
     private ProductRepository productRepository;
-    
+
+    @AfterEach
+    void setUp () {
+        productRepository.deleteAllInBatch();
+    }
+
     @Test
     @DisplayName("신규 상품을 등록한다. 상품 번호는 가장 최근 상품 번호 +1 을 한다.")
     void createProduct() {
@@ -53,6 +60,9 @@ class ProductServiceTest {
         Assertions.assertThat(product)
             .extracting("productNumber","sellingType","productName","price")
             .contains("004", ProductSellingType.SELLING, "카푸치노", 5000);
+
+        List<Product> all = productRepository.findAll();
+
     }
 
     @Test
@@ -76,16 +86,6 @@ class ProductServiceTest {
             .contains("001", ProductSellingType.SELLING, "카푸치노", 5000);
     }
     
-    @Test
-    @DisplayName("")
-    void getSellingProducts() {
-        // given
-        
-        // when
-        
-        // then
-    }
-
     private Product createProduct(String productNumber, ProductType type, ProductSellingType sellingType, String name, int price) {
         return Product.builder()
             .productNumber(productNumber)

@@ -5,7 +5,9 @@ import org.hyeonqz.practicaltest.spring.domain.product.ProductSellingType;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductType;
 
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 public class ProductResponse {
 
     private Long id;
@@ -35,30 +37,6 @@ public class ProductResponse {
             .productName(product.getProductName())
             .price(product.getPrice())
             .build();
-    }
-
-    public Long getId () {
-        return id;
-    }
-
-    public String getProductNumber () {
-        return productNumber;
-    }
-
-    public ProductType getProductType () {
-        return productType;
-    }
-
-    public ProductSellingType getSellingType () {
-        return sellingType;
-    }
-
-    public String getProductName () {
-        return productName;
-    }
-
-    public int getPrice () {
-        return price;
     }
 
 }

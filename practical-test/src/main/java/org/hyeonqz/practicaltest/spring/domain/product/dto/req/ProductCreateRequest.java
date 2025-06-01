@@ -1,5 +1,6 @@
 package org.hyeonqz.practicaltest.spring.domain.product.dto.req;
 
+import org.hyeonqz.practicaltest.spring.domain.product.Product;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductSellingType;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductType;
 
@@ -21,6 +22,16 @@ public class ProductCreateRequest {
         this.productSellingType = productSellingType;
         this.name = name;
         this.price = price;
+    }
+
+    public Product toEntity (String nextProductNumber) {
+        return Product.builder()
+            .productNumber(nextProductNumber)
+            .productType(productType)
+            .sellingType(productSellingType)
+            .productName(name)
+            .price(price)
+            .build();
     }
 
 }
