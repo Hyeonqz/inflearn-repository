@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class ProductController {
     }
 
     @PostMapping("/api/v1/products/new")
-    public void createProduct(@RequestBody ProductCreateRequest request) {
+    public void createProduct(@Valid @RequestBody ProductCreateRequest request) {
         productService.createProduct(request);
     }
 

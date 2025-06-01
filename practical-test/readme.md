@@ -206,9 +206,70 @@ LocalDateTime 같은 경우는 파라미터를 통해서 받는 식으로 로직
 
 위 계층에서는 Mocking 을 통하여 테스트를 진행한다 <br>
 
+```java
+@WebMvcTest(controllers = ProductController.class) // Controller 관련 bean 만 올릴 수 있는 테스트
+class ProductControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc; // mocking 처리를 도와주는 프레임워크
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockitoBean // productService mock 객체를 컨테이너에 넣어준다.
+    private ProductService productService;
+
+  @Test
+  @DisplayName("신규 상품을 생성한다.")
+  void createProduct() throws Exception {
+    // given
+    ProductCreateRequest request = ProductCreateRequest.builder()
+            .productType(ProductType.HANDMADE)
+            .productSellingType(ProductSellingType.SELLING)
+            .name("Americano")
+            .price(4000)
+            .build();
+
+    // when & then
+    // api 를 쏜다.
+    mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/products/new")
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+}
+```
+
+#### DTO 에서 spring validation 을 통해 검증하는 방법
+```java
+@NoArgsConstructor
+@Getter
+public class ProductCreateRequest {
+
+  @NotNull // enum -> notnull 사용
+  private ProductType productType;
+
+  @NotNull
+  private ProductSellingType productSellingType;
+
+  @NotBlank // String -> NotBlank 사용
+  private String name;
+
+  @Positive // int,long -> @Positive -> 양수 인지 체크
+  private int price;
+}
+
+@PostMapping("/api/v1/products/new")
+public void createProduct(@Valid @RequestBody ProductCreateRequest request) {
+    // @Valid 를 사용하여 요청이 올 때 검증을 할 수 있다.
+  productService.createProduct(request);
+}
 
 
-
+```
 
 
 

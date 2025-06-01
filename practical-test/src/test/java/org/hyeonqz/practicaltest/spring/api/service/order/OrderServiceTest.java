@@ -7,6 +7,7 @@ import static org.hyeonqz.practicaltest.spring.domain.product.ProductType.HANDMA
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.apache.catalina.core.ApplicationContext;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.groups.Tuple;
 import org.hyeonqz.practicaltest.spring.api.controller.order.reqeust.OrderCreateRequest;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ActiveProfiles("test")
 @SpringBootTest
 class OrderServiceTest {
+    ApplicationContext applicationContext;
 
     @Autowired
     private ProductRepository productRepository;

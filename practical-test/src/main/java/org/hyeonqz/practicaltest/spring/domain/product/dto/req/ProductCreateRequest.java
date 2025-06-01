@@ -4,15 +4,27 @@ import org.hyeonqz.practicaltest.spring.domain.product.Product;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductSellingType;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductType;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public class ProductCreateRequest {
 
+    @NotNull // enum -> notnull 사용
     private ProductType productType;
+
+    @NotNull
     private ProductSellingType productSellingType;
+
+    @NotBlank // String -> NotBlank 사용
     private String name;
+
+    @Positive // int,long -> @Positive -> 양수 인지 체크
     private int price;
 
     @Builder
