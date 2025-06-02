@@ -249,36 +249,115 @@ class ProductControllerTest {
 @Getter
 public class ProductCreateRequest {
 
-  @NotNull // enum -> notnull 사용
+  @NotNull(message = "상품 타입은 필수입니다.") // enum -> notnull 사용
   private ProductType productType;
 
-  @NotNull
+  @NotNull(message = "상품 판매상태는 필수입니다.")
   private ProductSellingType productSellingType;
 
-  @NotBlank // String -> NotBlank 사용
+  @Max(message = "최대 50자리 까지만 가능합니다.", value = 50)
+  @NotBlank(message = "상품 이름은 필수입니다.") // String -> NotBlank 사용
   private String name;
 
-  @Positive // int,long -> @Positive -> 양수 인지 체크
+  @Positive(message = "상품 가격은 양수여야 합니다.") // int,long -> @Positive -> 양수 인지 체크
   private int price;
 }
 
 @PostMapping("/api/v1/products/new")
-public void createProduct(@Valid @RequestBody ProductCreateRequest request) {
-    // @Valid 를 사용하여 요청이 올 때 검증을 할 수 있다.
-  productService.createProduct(request);
+public ApiResponse<ProductResponse> createProduct(@Valid @RequestBody ProductCreateRequest request) {
+  return ApiResponse.ok(productService.createProduct(request));
 }
-
-
 ```
 
+```java
+@Getter
+public class ApiResponse<T> {
 
+    private int code;
+    private HttpStatus httpStatus;
+    private String message;
+    private T data;
 
+    public ApiResponse (HttpStatus httpStatus, String message, T data) {
+        this.code = httpStatus.value();
+        this.httpStatus = httpStatus;
+        this.message = message;
+        this.data = data;
+    }
 
+    public static <T> ApiResponse<T> of(HttpStatus httpStatus, T data) {
+        return new ApiResponse<>(httpStatus, httpStatus.name(), data);
+    }
 
+    public static <T> ApiResponse<T> ok(T data) {
+        return new ApiResponse<>(HttpStatus.OK, HttpStatus.OK.name(), data);
+    }
+}
+```
 
+API 공통 응답형식 정의 하는 코드이다 <br>
 
+테스트는 아래와 같이 검증한다 <br>
+```java
+    @Test
+    @DisplayName("신규 상품 등록시 상품 타입은 필수값이다.")
+    void createProductWithoutType () throws Exception {
+        // given
+        ProductCreateRequest request = ProductCreateRequest.builder()
+            .productType(ProductType.HANDMADE)
+            .name("Americano")
+            .price(4000)
+            .build();
 
+        // when & then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/products/new")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            // getter 가 있어야 함.
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("400"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.httpStatus").value("BAD_REQUEST"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("상품 판매상태는 필수입니다."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty()
+            );
+    }
+```
 
+컨트롤러에서 Validation 을 체크할 때 '**책임을 분리**' 할 수 있어야 한다 <br>
 
+```java
+    //@Max(message = "최대 50자리 까지만 가능합니다.", value = 50)
+    @NotBlank(message = "상품 이름은 필수입니다.") // String -> NotBlank @NotNull + @NotEmpty 종합본임
+    private String name;
+```
 
+@Max 같은 경우는 도메인 정책이기 때문에 따로 Validation 을 해야한다. <br>
+
+#### queryParameter 검증
+```java
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/selling")
+                .queryParam("name","hkjin")
+                .queryParam("id","14")
+            )
+```
+
+#### Parameter 가 없는 @GetMapping 테스트
+```java
+    @Test
+    @DisplayName("판매중인 상품을 조회한다.")
+    void getSellingProducts () throws Exception {
+        // given & when
+        Mockito.when(productService.getSellingProducts()).thenReturn(List.of());
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/selling")
+            )
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data").isArray())
+        ;
+    }
+```
 

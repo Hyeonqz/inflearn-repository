@@ -4,7 +4,9 @@ import org.hyeonqz.practicaltest.spring.domain.product.Product;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductSellingType;
 import org.hyeonqz.practicaltest.spring.domain.product.ProductType;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
@@ -15,16 +17,19 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ProductCreateRequest {
 
-    @NotNull // enum -> notnull 사용
+    @NotNull(message = "상품 타입은 필수입니다.") // enum -> notnull 사용
     private ProductType productType;
 
-    @NotNull
+    @NotNull(message = "상품 판매상태는 필수입니다.")
     private ProductSellingType productSellingType;
 
-    @NotBlank // String -> NotBlank 사용
+    //@NotNull // 공백 " " 은 처리하지 못함
+    //@NotEmpty // 공백은 통과, " " 은 통과하지 못함
+    //@Max(message = "최대 50자리 까지만 가능합니다.", value = 50)
+    @NotBlank(message = "상품 이름은 필수입니다.") // String -> NotBlank @NotNull + @NotEmpty 종합본임
     private String name;
 
-    @Positive // int,long -> @Positive -> 양수 인지 체크
+    @Positive(message = "상품 가격은 양수여야 합니다.") // int,long -> @Positive -> 양수 인지 체크
     private int price;
 
     @Builder
